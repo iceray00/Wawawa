@@ -10,14 +10,21 @@ pip3 install -r requirements.txt
 
 ## Test CUDA available
 
-Must test __TensorFlow__ in __CUDA__ is available: 
+Must test __TensorFlow__ in __CUDA__ is available.
+
+* You can test it in following code:
 ```python
 import tensorflow as tf
 print(tf.__version__)
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 ```
 
-* if show that `Num GPUs Available:` ≥ 1, that is Ready successfully!
+* Another way, you can run the script to test it directly:
+```bash
+python3 test/test_cuda_available.py
+```
+
+* if show that `Num GPUs Available:` __≥ 1__, that is Ready successfully!
 
 
 ## Quick Start
