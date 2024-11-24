@@ -1,6 +1,6 @@
 h5py
 kagglehub
-tensorflow
+tensorflow==2.13.1
 scikit-learn
 numpy
 matplotlib
