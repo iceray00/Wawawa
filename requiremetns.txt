@@ -1,0 +1,6 @@
+h5py
+kagglehub
+tensorflow
+scikit-learn
+numpy
+matplotlib
