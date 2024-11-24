@@ -8,6 +8,6 @@ def show_hyperparameters(window_size, d_model, num_heads, ff_dim, num_layers, ma
     print(f"ff_dim: {ff_dim}")
     print(f"num_layers: {num_layers}")
     print(f"max_len: {max_len}")
-    print(f"patience_early_stopping: {patience_early_stopping}")
     print(f"patience_reduce_lr: {patience_reduce_lr}")
+    print(f"patience_early_stopping: {patience_early_stopping}")
     print("===========================\n")
