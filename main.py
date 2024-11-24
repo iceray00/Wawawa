@@ -1,5 +1,3 @@
-# main.py
-
 import kagglehub
 import numpy as np
 

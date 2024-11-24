@@ -1,5 +1,3 @@
-# data/data_loader.py
-
 import h5py
 import pickle
 

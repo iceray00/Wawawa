@@ -1,5 +1,3 @@
-# models/layers.py
-
 import tensorflow as tf
 from tensorflow.keras.layers import Layer, Dense, Dropout, MultiHeadAttention, LayerNormalization, Add, BatchNormalization
 from tensorflow.keras import regularizers

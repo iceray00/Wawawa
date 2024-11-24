@@ -1,5 +1,3 @@
-# utils/show_hyperparameters.py
-
 def show_hyperparameters(window_size, d_model, num_heads, ff_dim, num_layers, max_len, patience_early_stopping, patience_reduce_lr, save_fig):
     print("\n===== Hyperparameters =====")
     print(f"window_size: {window_size}")

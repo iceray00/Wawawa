@@ -1,5 +1,3 @@
-# models/model_builder.py
-
 import tensorflow as tf
 from tensorflow.keras.layers import Input, Dense, Dropout, LayerNormalization, Add, BatchNormalization
 from tensorflow.keras.models import Model
