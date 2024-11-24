@@ -1,9 +1,4 @@
 
-### Attention
-
-在AutoDL里不要开CUDA版本为12.x的机子！！因为最新的TensorFlow还没适配，只能开11.8的！
-
-
 ## Dependencies
 
 Please execute the following command to install the necessary dependencies:
@@ -30,3 +25,10 @@ print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 ```bash
 python3 main.py
 ```
+
+
+### Attention
+
+在AutoDL里不要开CUDA版本为12.x的机子！！因为最新的TensorFlow还没适配，只能开11.8的！
+
+
