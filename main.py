@@ -20,13 +20,13 @@ if __name__ == '__main__':
     # 超参数设置
     window_size = 12      # 使用过去12个时间节点（每个为 5min）的数据进行预测（改动的话需要也一起改动 max_len）
     steps_per_day = 288   # 每天有 288 个时间步（固定的）
-    epochs = 2          # 训练轮次（不过设置了早停，一般都到不了100轮）
-    d_model = 32          # 特征维度。通常 d_model / num_heads 在 16 至 64 之间，过小会导致注意力不足，过大会导致计算浪费
+    epochs = 100          # 训练轮次（不过设置了早停，一般都到不了100轮）
+    d_model = 64          # 特征维度。通常 d_model / num_heads 在 16 至 64 之间，过小会导致注意力不足，过大会导致计算浪费
     num_heads = 2         # 多头注意力机制的头数。d_model 必须能被 num_heads 整除，以确保每个头的维度是一致的
-    ff_dim = 32          # Transformer 块中前馈神经网络的隐层维度
+    ff_dim = 128          # Transformer 块中前馈神经网络的隐层维度
     num_layers = 1        # Transformer 编码器中的层数
     max_len = 12          # 模型能够处理的最大序列长度，这个长度应该大于或等于 window_size，即用作输入的时间步数
-    save_fig = True      # 是否保存抽取展示的三张图片（第一张、第一百张、最后一张）
+    save_fig = True       # 是否保存抽取展示的三张图片（第一张、第一百张、最后一张）
 
     patience_early_stopping = 12   # 早停的严格度
     patience_reduce_lr = 4         # 降低学习率的严格度
