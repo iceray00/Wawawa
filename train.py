@@ -10,7 +10,7 @@ from utils.metrics import mean_absolute_percentage_error
 from utils.show_hyperparameters import show_hyperparameters
 
 def train_and_evaluate(X_train, y_train, X_test, y_test, adj_matrix, scaler, epochs, d_model, num_heads, ff_dim,
-                       num_layers, max_len, window_size, patience_early_stopping, patience_reduce_lr):
+                       num_layers, max_len, window_size, patience_early_stopping, patience_reduce_lr, save_fig):
     # 构建模型
     model = build_transformer_model(
         input_shape=(window_size, X_train.shape[2]),
@@ -66,7 +66,8 @@ def train_and_evaluate(X_train, y_train, X_test, y_test, adj_matrix, scaler, epo
         num_layers=num_layers,
         max_len=max_len,
         patience_early_stopping=patience_early_stopping,
-        patience_reduce_lr=patience_reduce_lr
+        patience_reduce_lr=patience_reduce_lr,
+        save_fig=save_fig
     )
     print(f'MAE: {mae:.4f}')
     print(f'RMSE: {rmse:.4f}')
@@ -79,7 +80,7 @@ def train_and_evaluate(X_train, y_train, X_test, y_test, adj_matrix, scaler, epo
     plt.plot(y_pred_inverse[:, 0], label='Predicted')
     plt.legend()
     plt.title("Traffic Flow Prediction with Time Features at First Load")
-    plt.savefig("At_1th_Load.png")
+    if save_fig: plt.savefig("At_1th_Load.png")
     plt.show()
 
     plt.figure(figsize=(10, 6))
@@ -87,7 +88,7 @@ def train_and_evaluate(X_train, y_train, X_test, y_test, adj_matrix, scaler, epo
     plt.plot(y_pred_inverse[:, 100], label='Predicted')
     plt.legend()
     plt.title("Traffic Flow Prediction with Time Features at 100th Load")
-    plt.savefig("At_100th_Load.png")
+    if save_fig: plt.savefig("At_100th_Load.png")
     plt.show()
 
     plt.figure(figsize=(10, 6))
@@ -95,5 +96,5 @@ def train_and_evaluate(X_train, y_train, X_test, y_test, adj_matrix, scaler, epo
     plt.plot(y_pred_inverse[:, -1], label='Predicted')
     plt.legend()
     plt.title("Traffic Flow Prediction with Time Features at Last Load")
-    plt.savefig("At_207th_Load.png")
+    if save_fig: plt.savefig("At_207th_Load.png")
     plt.show()
