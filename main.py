@@ -26,10 +26,10 @@ if __name__ == '__main__':
     ff_dim = 128          # Transformer 块中前馈神经网络的隐层维度
     num_layers = 1        # Transformer 编码器中的层数
     max_len = 12          # 模型能够处理的最大序列长度，这个长度应该大于或等于 window_size，即用作输入的时间步数
-    save_fig = True       # 是否保存抽取展示的三张图片（第一张、第一百张、最后一张）
+    save_fig = False      # 是否保存抽取展示的三张图片（第一张、第一百张、最后一张）
 
-    patience_early_stopping = 12   # 早停的严格度
     patience_reduce_lr = 4         # 降低学习率的严格度
+    patience_early_stopping = 12   # 早停的严格度
 
     # 数据预处理
     X, y, scaler = preprocess_data_with_time(traffic_data, window_size, steps_per_day)  # 利用带有时间特征信息的数据进行预处理
