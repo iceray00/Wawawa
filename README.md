@@ -29,6 +29,4 @@ python3 main.py
 
 ### Attention
 
-在AutoDL里不要开CUDA版本为12.x的机子！！因为最新的TensorFlow还没适配，只能开11.8的！
-
-
+**Do NOT** OPEN CUDA version **12.x** in AutoDL!! Because the latest TensorFlow version is not yet available, only **11.8** will be available!
