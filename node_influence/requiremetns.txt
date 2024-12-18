@@ -1,0 +1,10 @@
+h5py
+kagglehub
+tensorflow
+scikit-learn
+numpy
+matplotlib
+tensorflow_addons
+networkx
+python-louvain
+PyWavelets
