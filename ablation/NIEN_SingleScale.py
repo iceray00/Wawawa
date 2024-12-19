@@ -154,31 +154,6 @@ class MultiScaleGraphConvolution(Layer):
         return combined_output
 
 
-class SingleScaleGraphConvolution(Layer):  # 改为单尺度
-    def __init__(self, adj_matrix, d_model, dropout_rate=0.1):
-        super(SingleScaleGraphConvolution, self).__init__()
-        self.adj_matrix = tf.convert_to_tensor(adj_matrix, dtype=tf.float32)  # 转为张量
-        self.dense = Dense(d_model, kernel_regularizer=tf.keras.regularizers.l2(1e-4))  # 添加 L2 正则化
-        self.dropout = Dropout(dropout_rate)
-        self.concat_dense = Dense(d_model)  # 新增：将拼接后的特征投影回 d_model
-
-    def call(self, inputs):
-        # 分离交通流量特征和时间特征
-        traffic_data = inputs[:, :, :207]  # 提取交通流量特征（与邻接矩阵匹配的部分）
-        time_features = inputs[:, :, 207:]  # 提取时间特征
-
-        graph_output = tf.matmul(traffic_data,
-                                 self.adj_matrix)  # [batch, window, 207] * [207, 207] = [batch, window, 207]
-        graph_output = self.dense(graph_output)  # [batch, window, d_model]
-        graph_output = self.dropout(graph_output)
-
-        combined_output = tf.concat([graph_output, time_features], axis=-1)  # [batch, window, d_model + 2 = 66]
-
-        combined_output = self.concat_dense(combined_output)  # [batch, window, d_model = 64]
-
-        return combined_output
-
-
 
 # 可学习的位置编码
 class LearnablePositionalEncoding(tf.keras.layers.Layer):
@@ -239,10 +214,7 @@ def build_transformer_model(input_shape, adj_matrix, d_model=64, num_heads=4, ff
     inputs = Input(shape=input_shape)
 
     # # 使用自定义层提取空间信息 (多尺度+动态邻接)
-    # x = MultiScaleGraphConvolution(adj_matrix, d_model, dropout_rate=0.01, num_scales=num_scales)(inputs)
-
-    # 采取单尺度图卷积
-    x = SingleScaleGraphConvolution(adj_matrix, d_model, dropout_rate=0.01)(inputs)
+    x = MultiScaleGraphConvolution(adj_matrix, d_model, dropout_rate=0.01, num_scales=num_scales)(inputs)
 
     # 可学习的位置编码
     position_encoding = LearnablePositionalEncoding(max_len, d_model)(x)
@@ -359,6 +331,10 @@ def mean_absolute_percentage_error(y_true, y_pred):
     epsilon = 0.01  # 防止除以零
     return np.mean(np.abs((y_true - y_pred) / (np.abs(y_true) + epsilon))) * 100
 
+def mean_absolute_percentage_error_custom(y_true, y_pred):
+    epsilon = 1e-7  # 更小的 epsilon 防止除以零
+    mask = np.abs(y_true) > epsilon
+    return np.mean(np.abs((y_true[mask] - y_pred[mask]) / (np.abs(y_true[mask]) + epsilon))) * 100
 
 # 模型训练与评估
 def train_and_evaluate_with_node_influence(X_train, y_train, X_test, y_test, adj_matrix, traffic_data, scaler, epochs,
@@ -380,7 +356,7 @@ def train_and_evaluate_with_node_influence(X_train, y_train, X_test, y_test, adj
         ff_dim=ff_dim,
         num_layers=num_layers,
         max_len=max_len,
-        num_scales=3  # 新增参数
+        num_scales=1  # 新增参数
     )
 
     # 定义回调函数
@@ -417,7 +393,8 @@ def train_and_evaluate_with_node_influence(X_train, y_train, X_test, y_test, adj
     # 计算评估指标
     mae = mean_absolute_error(y_test_inverse, y_pred_inverse)
     rmse = np.sqrt(mean_squared_error(y_test_inverse, y_pred_inverse))
-    mape = mean_absolute_percentage_error(y_test_inverse, y_pred_inverse)
+    # mape = mean_absolute_percentage_error(y_test_inverse, y_pred_inverse)
+    mape = mean_absolute_percentage_error_custom(y_test_inverse, y_pred_inverse)
     r2 = r2_score(y_test_inverse, y_pred_inverse)
 
     print(f'Final MAE: {mae:.4f}')
