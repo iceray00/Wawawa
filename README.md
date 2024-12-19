@@ -10,7 +10,7 @@ pip3 install -r requirements.txt
 
 ## Test CUDA available
 
-Must test __TensorFlow__ in __CUDA__ is available.
+Must test __TensorFlow__ in __CUDA__ is available...
 
 * You can test it in following code:
 ```python
