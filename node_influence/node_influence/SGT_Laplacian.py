@@ -327,7 +327,12 @@ def mean_absolute_percentage_error(y_true, y_pred):
     epsilon = 0.01  # 防止除以零
     return np.mean(np.abs((y_true - y_pred) / (np.abs(y_true) + epsilon))) * 100
 
-
+# 新
+def mean_absolute_percentage_error_custom(y_true, y_pred):
+    epsilon = 1e-7  # 更小的 epsilon 防止除以零
+    mask = np.abs(y_true) > epsilon
+    return np.mean(np.abs((y_true[mask] - y_pred[mask]) / (np.abs(y_true[mask]) + epsilon))) * 100
+    
 # 模型训练与评估
 def train_and_evaluate_with_node_influence(X_train, y_train, X_test, y_test, adj_matrix, traffic_data, scaler, epochs,
                                            d_model, num_heads, ff_dim, num_layers, max_len, window_size,
@@ -385,7 +390,8 @@ def train_and_evaluate_with_node_influence(X_train, y_train, X_test, y_test, adj
     # 计算评估指标
     mae = mean_absolute_error(y_test_inverse, y_pred_inverse)
     rmse = np.sqrt(mean_squared_error(y_test_inverse, y_pred_inverse))
-    mape = mean_absolute_percentage_error(y_test_inverse, y_pred_inverse)
+    # mape = mean_absolute_percentage_error(y_test_inverse, y_pred_inverse)
+    mape = mean_absolute_percentage_error_custom(y_test_inverse, y_pred_inverse)
     r2 = r2_score(y_test_inverse, y_pred_inverse)
 
     print(f'Final MAE: {mae:.4f}')
