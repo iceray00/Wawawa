@@ -21,12 +21,17 @@ epoch_pattern = re.compile(r"Epoch\s+\d+/\d+")
 r2_pattern = re.compile(r'Final R²:\s*([0-9.\-]+)')
 mae_pattern = re.compile(r'Final MAE:\s*([0-9.\-]+)')
 
+rmse_pattern = re.compile(r'Final RMSE:\s*([0-9.\-]+)')  # 匹配RMSE
+mape_pattern = re.compile(r'Final MAPE:\s*([0-9.\-]+)')  # 匹配MAPE
+
 
 
 def run_script(num_runs, model, output_path):
     # 结果存储列表
     r2_scores = []
     mae_scores = []
+    rmse_scores = []
+    mape_scores = []
     all_histories = []
 
     command = [
@@ -48,6 +53,8 @@ def run_script(num_runs, model, output_path):
             # 实时逐行读取输出
             r2_value = None
             mae_value = None
+            rmse_value = None
+            mape_value = None
             for line in iter(process.stdout.readline, ''):  # 逐行读取标准输出
                 if epoch_pattern.search(line):
                     print(line, end='')
@@ -67,13 +74,20 @@ def run_script(num_runs, model, output_path):
                     continue
 
                 print(line)  # 将每一行实时输出到屏幕
-                # 提取 MAE 和 R²
+
+                # 提取 MAE、R²、RMSE 和 MAPE
                 if mae_match := mae_pattern.search(line):
                     mae_value = float(mae_match.group(1))
-                    print("Get mae in script Successfully!")
+                    print("Get MAE in script successfully!")
                 if r2_match := r2_pattern.search(line):
                     r2_value = float(r2_match.group(1))
-                    print("Get r2 in script Successfully!")
+                    print("Get R² in script successfully!")
+                if rmse_match := rmse_pattern.search(line):
+                    rmse_value = float(rmse_match.group(1))
+                    print("Get RMSE in script successfully!")
+                if mape_match := mape_pattern.search(line):
+                    mape_value = float(mape_match.group(1))
+                    print("Get MAPE in script successfully!")
 
             process.wait()
 
@@ -86,12 +100,14 @@ def run_script(num_runs, model, output_path):
                     history = json.load(f)
                     all_histories.append(history)
 
-            if r2_value is not None and mae_value is not None:
-                print(f"Iteration {i + 1}: R² = {r2_value}, MAE = {mae_value}")
+            if r2_value is not None and mae_value is not None and rmse_value is not None and mape_value is not None:
+                print(f"@@ Iteration {i + 1}: R² = {r2_value}, MAE = {mae_value}, RMSE = {rmse_value}, MAPE = {mape_value} @@")
                 r2_scores.append(r2_value)
                 mae_scores.append(mae_value)
+                rmse_scores.append(rmse_value)
+                mape_scores.append(mape_value)
             else:
-                print(f"Could not find R² or MAE in the output for iteration {i + 1}. Skipping...")
+                print(f"Could not find R², MAE, RMSE, or MAPE in the output for iteration {i + 1}. Skipping...")
 
         except Exception as e:
             print(f"Error running {model}.py in iteration {i + 1}: {e}")
@@ -101,26 +117,36 @@ def run_script(num_runs, model, output_path):
     model_purename = os.path.splitext(model_basename)[0]
 
     # 计算平均值和标准差
-    if r2_scores and mae_scores:
+    if r2_scores and mae_scores and rmse_scores and mape_scores:
         avg_r2 = np.mean(r2_scores)
         std_r2 = np.std(r2_scores)
         avg_mae = np.mean(mae_scores)
         std_mae = np.std(mae_scores)
+        avg_rmse = np.mean(rmse_scores)
+        std_rmse = np.std(rmse_scores)
+        avg_mape = np.mean(mape_scores)
+        std_mape = np.std(mape_scores)
 
         print("\n===== Final Results =====")
         print(f"Average R²: {avg_r2:.4f} ± {std_r2:.4f}")
         print(f"Average MAE: {avg_mae:.4f} ± {std_mae:.4f}")
+        print(f"Average RMSE: {avg_rmse:.4f} ± {std_rmse:.4f}")
+        print(f"Average MAPE: {avg_mape:.4f} ± {std_mape:.4f}")
 
         # 将结果写入CSV文件（追加模式）
         if os.path.exists(f'{output_path}/results.csv'):
             with open(f'{output_path}/results.csv', 'a', newline='') as csvfile:
                 writer = csv.writer(csvfile)
-                writer.writerow([model_purename, avg_mae, std_mae, avg_r2, std_r2])
+                writer.writerow(
+                    [model_purename, avg_mae, std_mae, avg_rmse, std_rmse, avg_mape, std_mape, avg_r2, std_r2])
         else:
             with open(f'{output_path}/results.csv', 'w', newline='') as csvfile:
                 writer = csv.writer(csvfile)
-                writer.writerow(['model_name', 'avg_mae', 'std_mae', 'avg_r2', 'std_r2'])
-                writer.writerow([model_purename, avg_mae, std_mae, avg_r2, std_r2])
+                writer.writerow(
+                    ['model_name', 'avg_mae', 'std_mae', 'avg_rmse', 'std_rmse', 'avg_mape', 'std_mape', 'avg_r2',
+                     'std_r2'])
+                writer.writerow(
+                    [model_purename, avg_mae, std_mae, avg_rmse, std_rmse, avg_mape, std_mape, avg_r2, std_r2])
 
         if all_histories:
             plot_average_history(all_histories, model_purename, output_path) # 平均处理历史数据并绘图保存
