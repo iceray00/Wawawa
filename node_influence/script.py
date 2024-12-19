@@ -112,12 +112,12 @@ def run_script(num_runs, model, output_path):
         print(f"Average MAE: {avg_mae:.4f} ± {std_mae:.4f}")
 
         # 将结果写入CSV文件（追加模式）
-        if os.path.exists(f'{output_path}/results_old.csv'):
-            with open(f'{output_path}/results_old.csv', 'a', newline='') as csvfile:
+        if os.path.exists(f'{output_path}/results.csv'):
+            with open(f'{output_path}/results.csv', 'a', newline='') as csvfile:
                 writer = csv.writer(csvfile)
                 writer.writerow([model_purename, avg_mae, std_mae, avg_r2, std_r2])
         else:
-            with open(f'{output_path}/results_old.csv', 'w', newline='') as csvfile:
+            with open(f'{output_path}/results.csv', 'w', newline='') as csvfile:
                 writer = csv.writer(csvfile)
                 writer.writerow(['model_name', 'avg_mae', 'std_mae', 'avg_r2', 'std_r2'])
                 writer.writerow([model_purename, avg_mae, std_mae, avg_r2, std_r2])
@@ -126,7 +126,7 @@ def run_script(num_runs, model, output_path):
             plot_average_history(all_histories, model_purename, output_path) # 平均处理历史数据并绘图保存
 
     else:
-        print("No valid results_old were obtained.")
+        print("No valid results were obtained.")
 
 
 
