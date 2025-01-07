@@ -1,4 +1,7 @@
 
+**Attention**: Main Program is `NIEN.py`!!
+* and exec `python3 NIEN.py` to quick start!
+
 ## Dependencies
 
 Please execute the following command to install the necessary dependencies:
